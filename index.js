@@ -1,5 +1,8 @@
-var fs = require('fs'),
-  semver = require('semver');
+var cp = require('child_process'),
+  fs = require('fs'),
+  path = require('path'),
+  semver = require('semver'),
+  util = require('util');
 
 function Depget(repoDir) {
   this.repoDir = repoDir;
@@ -23,8 +26,10 @@ Depget.prototype.listAllVersions = function (cb) {
     var regex = /^(.+)-(.+)\.zip$/;
     var packages = [];
     files.forEach(function (file) {
-      var match = regex.exec(file),
-        name = match[1],
+      var match = regex.exec(file);
+      if (!match) return;
+
+      var name = match[1],
         version = match[2];
 
       packages[name] = packages[name] || [];
@@ -42,5 +47,23 @@ Depget.prototype.maxSatisfying = function (name, versionRange, cb) {
 
     var version = semver.maxSatisfying(versions, versionRange);
     cb(null, name + '-' + version + '.zip');
+  });
+};
+
+// finds the maxSatisfying package and unzips in current directory
+Depget.prototype.install = function (name, versionRange, cb) {
+  var self = this;
+  this.maxSatisfying(name, versionRange, function (err, package) { 
+    if (err) { return cb(err); }
+    var src = path.join(self.repoDir, package),
+      unzip = path.join(__dirname, 'tools', 'unzip-x86.exe');
+      cmd = util.format('"%s" "%s"', unzip, src);
+
+    var handle = cp.exec(cmd, function (err) {
+      if (err) { return cb(new Error('Unable to extract package "' + name + '": ' + err)); }
+      cb(null);
+    });
+    handle.stdout.pipe(process.stdout);
+    handle.stderr.pipe(process.stderr);
   });
 };
