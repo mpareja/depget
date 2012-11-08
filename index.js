@@ -23,7 +23,7 @@ Depget.prototype.listAllVersions = function (cb) {
   fs.readdir(this.repoDir, function (err, files) {
     if (err) { return cb(new Error('Unable to read repository: ' + err)); }
 
-    var regex = /^(.+)-(.+)\.zip$/;
+    var regex = /^(.+)-(.+)\.tgz\.gz/;
     var packages = [];
     files.forEach(function (file) {
       var match = regex.exec(file);
@@ -52,26 +52,14 @@ Depget.prototype.maxSatisfying = function (name, versionRange, cb) {
 
 // finds the maxSatisfying package and unzips in current directory
 Depget.prototype.install = function (name, versionRange, cb) {
-  var self = this,
-    cwd = process.cwd(),
-    modules = path.join(cwd, 'node_modules'),
-    module = path.join(modules, name);
-
-  if (!fs.existsSync(modules)) {
-    fs.mkdirSync(modules);
-    fs.mkdirSync(module);
-  } else if (!fs.existsSync(module)) {
-    fs.mkdirSync(module);
-  }
-
+  var self = this;
   this.maxSatisfying(name, versionRange, function (err, package) { 
     if (err) { return cb(err); }
-    var       unzip = path.join(__dirname, 'tools', 'unzip-x86.exe');
-      src = path.join(self.repoDir, package),
-      cmd = util.format('"%s" "%s" -d "%s"', unzip, src, module);
+    var module = path.join(self.repoDir, package),
+      cmd = util.format('npm install "%s"', module);
 
     var handle = cp.exec(cmd, function (err) {
-      if (err) { return cb(new Error('Unable to extract package "' + name + '": ' + err)); }
+      if (err) { return cb(new Error('Unable to install package "' + name + '": ' + err)); }
       cb(null);
     });
     handle.stdout.pipe(process.stdout);
