@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var async = require('async'),
   depget = require('./depget.js');
 
