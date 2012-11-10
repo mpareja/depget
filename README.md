@@ -6,9 +6,9 @@ Depget lets you put your npm packages on a file share and reference them from yo
 
 ## Referencing your private modules
 
-First, install depget and add it as a dependency.
+First, install depget either globally or as a dependency:
 
-    npm install --save depget
+    npm install -g depget
 
 Next, edit your packages.json file and add a `privateDependencies` hash. It tells depget the location of your private repositories and the dependencies you require from them:
 
