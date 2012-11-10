@@ -12,15 +12,15 @@ First, install depget and add it as a dependency.
 
 Next, edit your packages.json file and add a `privateDependencies` hash. It tells depget the location of your private repositories and the dependencies you require from them:
 
-		{
-			"privateDependencies": {
-				"/path/to/private/packages": {
-					"my_module": "~0.1.1"
-				},
-				"/path/to/other/packages": {
-					"my_other_module": "~0.1.1"
-				}
-			}
+    {
+      "privateDependencies": {
+        "/path/to/private/packages": {
+          "my_module": "~0.1.1"
+        },
+        "/path/to/other/packages": {
+          "my_other_module": "~0.1.1"
+        }
+      }
     }
 
 Finally, ask depget to pull down your modules by executing `depget update`.
