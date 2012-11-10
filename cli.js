@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 var async = require('async'),
-  depget = require('./depget.js');
+  depget = require('./depget.js'),
+  path = require('path');
 
 var command = process.argv[2],
   args = process.argv.slice(3),
-  pkg = require('./package.json');
+  pkg = require(path.join(process.cwd(), 'package.json'));
 
 if (command === 'update') {
   var configs = Object.keys(pkg.privateDependencies)
