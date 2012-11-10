@@ -5,18 +5,19 @@ var async = require('async'),
 
 var command = process.argv[2],
   args = process.argv.slice(3),
-  pkg = require(path.join(process.cwd(), 'package.json'));
+  pkg = require(path.join(process.cwd(), 'package.json')),
+  dependencies = pkg.privateDependencies || {};
 
 if (command === 'update') {
-  var configs = Object.keys(pkg.privateDependencies)
+  var configs = Object.keys(dependencies)
     .filter(function (repo) {
-      var deps = pkg.privateDependencies[repo];
+      var deps = dependencies[repo];
       return deps && Object.keys(deps).length > 0;
     })
     .map(function (repo) {
       return {
         installer: depget(repo),
-        deps: pkg.privateDependencies[repo]
+        deps: dependencies[repo]
       };
     });
 
