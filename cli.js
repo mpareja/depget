@@ -6,7 +6,7 @@ var command = process.argv[2],
   args = process.argv.slice(3),
   pkg = require('./package.json');
 
-if (command == 'update') {
+if (command === 'update') {
   var configs = Object.keys(pkg.privateDependencies)
     .filter(function (repo) {
       var deps = pkg.privateDependencies[repo];
@@ -19,7 +19,7 @@ if (command == 'update') {
       };
     });
 
-  var installations = []
+  var installations = [];
   if (configs && configs.length > 0) {
     configs.forEach(function (config) {
       var repoInstalls = Object.keys(config.deps).map(function (dep) {

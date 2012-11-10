@@ -23,11 +23,11 @@ Depget.prototype.listAllVersions = function (cb) {
   fs.readdir(this.repoDir, function (err, files) {
     if (err) { return cb(new Error('Unable to read repository: ' + err)); }
 
-    var regex = /^(.+)-(.+)\.tgz\.gz/;
+    var regex = new RegExp('^(.+)-(.+)\\.tgz\\.gz');
     var packages = [];
     files.forEach(function (file) {
       var match = regex.exec(file);
-      if (!match) return;
+      if (!match) { return; }
 
       var name = match[1],
         version = match[2];
@@ -53,9 +53,9 @@ Depget.prototype.maxSatisfying = function (name, versionRange, cb) {
 // finds the maxSatisfying package and unzips in current directory
 Depget.prototype.install = function (name, versionRange, cb) {
   var self = this;
-  this.maxSatisfying(name, versionRange, function (err, package) { 
+  this.maxSatisfying(name, versionRange, function (err, thepackage) {
     if (err) { return cb(err); }
-    var module = path.join(self.repoDir, package),
+    var module = path.join(self.repoDir, thepackage),
       cmd = util.format('npm install "%s"', module);
 
     var handle = cp.exec(cmd, function (err) {
