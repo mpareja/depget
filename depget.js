@@ -59,7 +59,7 @@ Depget.prototype.install = function (name, versionRange, cb) {
     var module = path.join(self.repoDir, thepackage),
       cmd = util.format('npm install "%s"', module);
 
-    exec(function (err) {
+    exec(cmd, function (err) {
       if (err) { return cb(new Error('Unable to install package "' + name + '": ' + err)); }
       cb(null);
     });
