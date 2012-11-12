@@ -1,6 +1,6 @@
 {
   "name": "depget",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Install private modules from a directory or file share",
   "keywords": [
     "npm",
