@@ -47,11 +47,11 @@ Depget.prototype.maxSatisfying = function (name, versionRange, cb) {
     if (!versions) { return cb('Package not found: ' + name); }
 
     var version = semver.maxSatisfying(versions, versionRange);
-    cb(null, name + '-' + version + '.zip');
+    cb(null, name + '-' + version + '.tgz');
   });
 };
 
-// finds the maxSatisfying package and unzips in current directory
+// finds the maxSatisfying package and installs in current directory
 Depget.prototype.install = function (name, versionRange, cb) {
   var self = this;
   this.maxSatisfying(name, versionRange, function (err, thepackage) {
