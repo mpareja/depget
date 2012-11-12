@@ -8,7 +8,21 @@ var command = process.argv[2],
   pkg = require(path.join(process.cwd(), 'package.json')),
   dependencies = pkg.privateDependencies || {};
 
-if (command === 'update') {
+if (command === 'publish') {
+  if (pkg.registry) {
+    var force = args.shift() === '--force',
+      dg = depget(pkg.registry);
+
+    dg.publish(force, function (err) {
+      console.log(err
+        ? 'Unable to publish package: ' + err
+        : 'done.');
+    });
+  } else {
+    console.log('Must specify the "registry" configuration option in your package.json. ' +
+      'It should point at your private directory or file-share.');
+  }
+} else if (command === 'update') {
   var configs = Object.keys(dependencies)
     .filter(function (repo) {
       var deps = dependencies[repo];
@@ -42,6 +56,14 @@ if (command === 'update') {
   } else {
     console.log('Nothing to install.');
   }
+} else {
+  var msg = 'SYNTAX: depget <command> [opts...]\n\n' +
+    'Commands:\n\n' +
+    'update: install latest version of new and existing modules\n' +
+    'publish: publish a .tgz file matching the current version to the custom registry\n' +
+    '  --force: overwrite previously published package';
+
+  console.log(msg);
 }
 
 

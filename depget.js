@@ -1,5 +1,6 @@
 var cp = require('child_process'),
   fs = require('fs'),
+  fse = require('fs-extra'),
   path = require('path'),
   semver = require('semver'),
   util = require('util');
@@ -58,11 +59,50 @@ Depget.prototype.install = function (name, versionRange, cb) {
     var module = path.join(self.repoDir, thepackage),
       cmd = util.format('npm install "%s"', module);
 
-    var handle = cp.exec(cmd, function (err) {
+    exec(function (err) {
       if (err) { return cb(new Error('Unable to install package "' + name + '": ' + err)); }
       cb(null);
     });
-    handle.stdout.pipe(process.stdout);
-    handle.stderr.pipe(process.stderr);
   });
 };
+
+Depget.prototype.publish = function (force, callback) {
+  try {
+    var pkg = require(path.join(process.cwd(), 'package.json'));
+  } catch (e) {
+    callback(new Error('Unable to load package.json'));
+    return;
+  }
+
+  var self = this,
+    file = util.format('%s-%s.tgz', pkg.name, pkg.version),
+    dst = path.join(self.repoDir, file);
+
+  exec('npm pack', function (err) {
+    if (err) { return callback(err); }
+
+    fs.exists(dst, function (exists) {
+      if (!exists) {
+        publish(null);
+      } else if (force) {
+        fs.unlink(file, publish);
+      } else {
+        callback(new Error('This package has already been published. Use --force to override.'));
+        return;
+      }
+    });
+  });
+
+  function publish(err) {
+    if (err) { return callback(err); }
+    fse.copy(file, dst, function (err) {
+      callback(!err ? null : new Error('Failed pushing file to registry.'));
+    });
+  }
+};
+
+function exec(cmd, cb) {
+  var handle = cp.exec(cmd, cb);
+  handle.stdout.pipe(process.stdout);
+  handle.stderr.pipe(process.stderr);
+}

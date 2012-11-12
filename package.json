@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "semver": "~1.1.0",
-    "async": "~0.1.22"
+    "async": "~0.1.22",
+    "fs-extra": "~0.3.2"
   },
   "devDependencies": {
     "paprika": "~0.5.2-alpha",
