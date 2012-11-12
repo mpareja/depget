@@ -24,7 +24,7 @@ Depget.prototype.listAllVersions = function (cb) {
   fs.readdir(this.repoDir, function (err, files) {
     if (err) { return cb(new Error('Unable to read repository: ' + err)); }
 
-    var regex = new RegExp('^(.+)-(.+)\\.tgz\\.gz');
+    var regex = new RegExp('^(.+)-(.+)\\.tgz');
     var packages = [];
     files.forEach(function (file) {
       var match = regex.exec(file);
