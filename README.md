@@ -27,4 +27,8 @@ Finally, ask depget to pull down your modules by executing `depget update`.
 
 ## Publishing your private modules
 
-Place your ready to publish node packages in a directory or file share with the `<name>-<version>.tgz.gz` naming convention. That's it.
+First, set the `registry` setting in your package.json to point at your private repository. Now, whenever you want to publish a new package, just execute the following from your module's root directory:
+
+    depget publish
+
+This will generate an npm package using `npm pack` and copy it up to your registry. That's it. You can pass `--force` if you want depget to overwrite the same version of the package if it has already been pushed up to the registry.
